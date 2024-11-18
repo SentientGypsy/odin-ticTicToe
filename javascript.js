@@ -2,7 +2,17 @@
 
 function createBoard(){
 
-    const gameBoard = ['','','','','','','','',''];
+    const gameBoard = [
+        ['','',''],
+        ['','',''],
+        ['','','']
+    ];
+    // indexs are accessed like gameboard[row][element in row] ----> gameboard[1][2] would be middle row last element
+
+    
+    //add function that prints the board to the console
+    // add functions that update the state of the board when an element changes
+    // add a function that takes an index of the two-dimensional array and depending on which player calls it place X or O
 
     return {board: gameBoard}
 }
@@ -17,7 +27,9 @@ function createPlayer(name){
     return{playerName, getScore, increaseScore};
 }
 
+function gameLoop () {
 
+}
 
 const playerOne = createPlayer("chance");
 const playerTwo = createPlayer("caroline");
