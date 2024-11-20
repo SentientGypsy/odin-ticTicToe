@@ -1,5 +1,9 @@
 
 
+
+
+
+
 function createBoard(){
 
     let gameBoard = [
@@ -12,7 +16,7 @@ function createBoard(){
 
     //add function that prints the board to the console
     // add functions that update the state of the board when an element changes
-    const checkWinner = (board, player) => {
+    const checkWinner = (board, player, boardObject) => {
         // this function exists to check the board for any winners.
          // Check rows for a winner
         for (let row = 0; row < 3; row++) {
@@ -21,10 +25,13 @@ function createBoard(){
                 if (board[row][0] === 'X') {
                     console.log("player one has won this round");
                     player.increaseScore(player);
+                    boardObject.disableTicTacToeBoard();
                     
                 } else {
                     console.log("player two has won this round");
                     player.increaseScore(player);
+                    boardObject.disableTicTacToeBoard();
+
                 }
 
                 return board[row][0] + " is the winner!"; // Return 'X' or 'O'
@@ -38,10 +45,14 @@ function createBoard(){
                 if (board[col][0] === 'X') {
                     console.log("player one has won this round");
                     player.increaseScore(player);
+                    boardObject.disableTicTacToeBoard();
+
                     
                 } else {
                     console.log("player two has won this round");
                     player.increaseScore(player);
+                    boardObject.disableTicTacToeBoard();
+
                 }
 
 
@@ -55,10 +66,14 @@ function createBoard(){
             if (board[0][0] === 'X') {
                 console.log("player one has won this round");
                 player.increaseScore(player);
+                boardObject.disableTicTacToeBoard();
+
                 
             } else {
                 console.log("player two has won this round");
                 player.increaseScore(player);
+                boardObject.disableTicTacToeBoard();
+
             }
 
             return board[0][0] + " is the winner!"; // Return 'X' or 'O'
@@ -69,10 +84,14 @@ function createBoard(){
             if (board[0][2] === 'X') {
                 console.log("player one has won this round");
                 player.increaseScore(player);
+                boardObject.disableTicTacToeBoard();
+
                 
             } else {
                 console.log("player two has won this round");
                 player.increaseScore(player);
+                boardObject.disableTicTacToeBoard();
+
             }
 
 
@@ -83,6 +102,8 @@ function createBoard(){
         // Check for a draw (no empty cells left)
         const isDraw = board.every(row => row.every(cell => cell !== ''));
         if (isDraw) {
+            boardObject.disableTicTacToeBoard();
+
             return 'Draw';
         }
 
@@ -91,17 +112,54 @@ function createBoard(){
     }
 
 
-    const resetBoard = (board) => {
-        // this map operation resets the board back to '', like after one side wins
-        board = board.map(row => row.map(() => ''));
-    }
+   
 
     let playerTurn = true;
 
+    const resetTicTacToeBoard = (board, boardObject) => {
+        // Get all buttons inside the board container
+        const buttons = document.querySelectorAll('#boardContainer button');
+        
+        // Loop through all buttons and clear their text content
+        buttons.forEach((button) => {
+            button.textContent = '';
+        });
+    
+        // Reset the board array to its initial state
+        for (let i = 0; i < board.length; i++) {
+            for (let j = 0; j < board[i].length; j++) {
+                board[i][j] = ''; // Reset each cell in the array
+            }
+        }
+
+        boardObject.enableTicTacToeBoard();
+        
+    }
+
+    const disableTicTacToeBoard = () => {
+        // Get all buttons inside the board container
+        const buttons = document.querySelectorAll('#boardContainer button');
+    
+    // Loop through all buttons and disable them
+        buttons.forEach((button) => {
+            button.disabled = true;
+    });
+    }
+
+    const enableTicTacToeBoard = () => {
+          // Get all buttons inside the board container
+          const buttons = document.querySelectorAll('#boardContainer button');
+    
+          // Loop through all buttons and disable them
+              buttons.forEach((button) => {
+                  button.disabled = false;
+          });
+
+    }
 
 
 
-    return {gameBoard, checkWinner, resetBoard, playerTurn}
+    return {gameBoard, checkWinner, resetTicTacToeBoard, playerTurn,disableTicTacToeBoard, enableTicTacToeBoard}
 }
 
 function createPlayer(name){
@@ -151,10 +209,12 @@ function domObject() {
     const createTicTacToeBoard = (board, boardObject, playerOneObject, playerTwoObject) => {
         // Create a container for the board
         const boardContainer = document.createElement('div');
+        boardContainer.id = "boardContainer";
         boardContainer.style.display = 'grid';
         boardContainer.style.gridTemplateColumns = `repeat(${board[0].length}, 1fr)`;
         boardContainer.style.gap = '5px';
         boardContainer.style.width = '150px'; // Adjust size as needed
+        boardContainer.style.justifyContent = "center";
         
         // Loop through the 2D array to create buttons
         for (let i = 0; i < board.length; i++) {
@@ -165,19 +225,22 @@ function domObject() {
                 button.style.height = '100px';
                 button.style.fontSize = '32px';
                 button.style.textAlign = 'center';
+                button.style.backgroundColor = "white";
+                button.style.borderColor = "#b3eBF2"
+
     
                 button.addEventListener('click', () => {
                     if (!button.textContent && boardObject.playerTurn) {
                         button.textContent = 'X'; 
                         board[i][j] = 'X'; // Update the board array
-                        console.log(boardObject.checkWinner(board, playerOneObject));
+                        console.log(boardObject.checkWinner(board, playerOneObject, boardObject));
                         boardObject.playerTurn = false;
                         
                     } else if (!button.textContent && !boardObject.playerTurn){
 
                         button.textContent = 'O'; 
                         board[i][j] = 'O'; // Update the board array
-                        console.log(boardObject.checkWinner(board, playerTwoObject));
+                        console.log(boardObject.checkWinner(board, playerTwoObject, boardObject));
                         boardObject.playerTurn = true;
 
                     }
@@ -203,17 +266,20 @@ function domObject() {
     return {appendToDoc, createTicTacToeBoard}
 }
 
+document.getElementById('resetButton').addEventListener('click', () => {
+    theBoard.resetTicTacToeBoard(theBoard.gameBoard, theBoard);
+});
+
 let theBoard = createBoard();
 let theDom = domObject();
 
 
-const playerOne = createPlayer("chance");
+const playerOne = createPlayer("player1");
 
-const playerTwo = createPlayer("caroline");
+const playerTwo = createPlayer("player2");
 playerTwo.playerOne = false;
 
-console.log(playerOne.playerName);
 
 theDom.createTicTacToeBoard(theBoard.gameBoard, theBoard, playerOne, playerTwo);
 
-console.log(theBoard.checkWinner(theBoard.gameBoard));
+
