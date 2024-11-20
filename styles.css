@@ -1,0 +1,19 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-items: center;
+    align-items: center;
+    
+}
+
+
+.scoreboard {
+    display: flex;
+    flex-direction: row;
+    justify-items: space-between;
+    text-align: center;
+
+    gap: 200px;
+    
+
+}
